@@ -82,3 +82,26 @@ const displayMovements = function (movements) {
 displayMovements(account1.movements);
 
 console.log(containerMovements.innerHTML);
+
+// Creating username
+
+const createUsername = function (accs) {
+  accs.forEach(function (acc) {
+    acc.username = acc.owner
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word[0])
+      .join("");
+  });
+};
+
+createUsername(accounts);
+
+// Calculate balance
+
+const calcDisplayBalance = function (movements) {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${balance} EUR`;
+};
+
+calcDisplayBalance(account1.movements);
