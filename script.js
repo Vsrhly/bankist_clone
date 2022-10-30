@@ -32,8 +32,14 @@ const account4 = {
   interestRate: 1,
   pin: 4444,
 };
+const account5 = {
+  owner: "Levent Süzgün",
+  movements: [430, 1000, 700, 50, 90, 1000000],
+  interestRate: 1,
+  pin: 8265,
+};
 
-const accounts = [account1, account2, account3, account4];
+const accounts = [account1, account2, account3, account4, account5];
 
 // Elements
 const labelWelcome = document.querySelector(".welcome");
@@ -98,11 +104,10 @@ createUsername(accounts);
 
 // Calculate balance
 
-const calcDisplayBalance = function (movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${balance} €`;
+const calcDisplayBalance = function (acc) {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${acc.balance} €`;
 };
-
 // Income, outcome
 
 const calcDisplaySummary = function (acc) {
@@ -125,6 +130,12 @@ const calcDisplaySummary = function (acc) {
   labelSumInterest.textContent = `${interest} €`;
 };
 
+const updateUI = function (acc) {
+  displayMovements(acc.movements);
+  calcDisplayBalance(acc);
+  calcDisplaySummary(acc);
+};
+
 // LOGIN
 
 // Event handlers
@@ -145,11 +156,58 @@ btnLogin.addEventListener("click", function (e) {
     }`;
     containerApp.style.opacity = 100;
     // Display and calc balance, summary, movements
-    displayMovements(currentAccount.movements);
-    calcDisplayBalance(currentAccount.movements);
-    calcDisplaySummary(currentAccount);
+    updateUI(currentAccount);
     //Empty input fields
-    inputLoginUsername = inputLoginPin.value = "";
+    inputLoginUsername.value = inputLoginPin.value = "";
+    inputLoginUsername.blur();
     inputLoginPin.blur(); // field loses focus
+  }
+});
+
+// Close account
+
+btnClose.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  if (
+    inputCloseUsername.value === currentAccount.username &&
+    +inputClosePin.value === currentAccount.pin
+  ) {
+    const index = accounts.findIndex(
+      (acc) => acc.username === currentAccount.username
+    );
+    // Delete account
+    accounts.splice(index, 1);
+  }
+  // Hide UI
+  inputClosePin.value = inputCloseUsername.value = "";
+  inputClosePin.blur();
+  inputCloseUsername.blur();
+  containerApp.style.opacity = 0;
+});
+
+// Trasnfer function
+
+btnTransfer.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  const amount = +inputTransferAmount.value;
+  const receiverAcc = accounts.find(
+    (acc) => acc.username === inputTransferTo.value
+  );
+  if (
+    amount > 0 &&
+    currentAccount.balance >= amount &&
+    receiverAcc &&
+    receiverAcc.username !== currentAccount.username
+  ) {
+    // Doing the transfer
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(amount);
+    // Update UI
+    updateUI(currentAccount);
+    inputTransferTo.value = inputTransferAmount.value = "";
+    inputTransferTo.blur();
+    inputTransferAmount.blur();
   }
 });
