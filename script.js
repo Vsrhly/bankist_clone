@@ -81,7 +81,7 @@ const displayMovements = function (movements, sort = false) {
           <div class="movements__type movements__type--${type}">
             ${i + 1} ${type}
           </div>  
-          <div class="movements__value">${mov} €</div>
+          <div class="movements__value">${mov}</div>
         </div>
         `;
 
@@ -241,4 +241,33 @@ btnSort.addEventListener("click", function (e) {
   e.preventDefault();
   displayMovements(currentAccount.movements, !sorted);
   sorted = !sorted;
+});
+
+// Generate arrays progrematically
+
+const x = new Array(7); // Creates an array with 7 empty elements
+console.log(x); // Only useful for fill() method
+x.fill(5); // Mutates the array fill(1,3) -- starts filling from index 3 with 1-s fill(1,3,5) -- fills from 3 to 5(not included)
+console.log(x); // Only useful for fill() method
+
+// Array.from
+
+const y = Array.from({ length: 7 }, () => 1);
+console.log(y);
+
+const z = Array.from({ length: 7 }, (_, i) => i + 1);
+console.log(z);
+
+const dice = Array.from(
+  { length: 100 },
+  () => Math.floor(6 * Math.random()) + 1
+);
+console.log(dice);
+
+labelBalance.addEventListener("click", function () {
+  const movementsUI = Array.from(
+    document.querySelectorAll(".movements__value"),
+    (el) => Number(el.textContent.replace("€"), "")
+  );
+  console.log(movementsUI);
 });
